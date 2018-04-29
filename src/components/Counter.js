@@ -1,44 +1,20 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { increase, decrease } from '../actions/Counter';
 
 class Counter extends Component {
-  constructor(props) {
-    super(props);
-    this.incrementAsync = this.incrementAsync.bind(this);
-    this.incrementIfOdd = this.incrementIfOdd.bind(this);
-  }
-
-  incrementIfOdd() {
-    if (this.props.value % 2 !== 0) {
-      this.props.onIncrement();
-    }
-  }
-
-  incrementAsync() {
-    setTimeout(this.props.onIncrement, 1000);
-  }
-
   render() {
-    const { value, onIncrement, onDecrement } = this.props;
-
     return (
       <p>
-        Clicked: {value} times
+        Clicked: {this.props.count} times
         {' '}
-        <button onClick={onIncrement}>
+        <button onClick={this.props.onIncrement}>
           +
         </button>
         {' '}
-        <button onClick={onDecrement}>
+        <button onClick={this.props.onDecrement}>
           -
-        </button>
-        {' '}
-        <button onClick={this.incrementIfOdd}>
-          Increment if odd
-        </button>
-        {' '}
-        <button onClick={this.incrementAsync}>
-          Increment async
         </button>
       </p>
     );
@@ -46,9 +22,20 @@ class Counter extends Component {
 }
 
 Counter.propTypes = {
-  value: PropTypes.number.isRequired,
+  count: PropTypes.number.isRequired,
   onIncrement: PropTypes.func.isRequired,
   onDecrement: PropTypes.func.isRequired
 };
 
-export default Counter;
+const mapStateToProps = (state) => {
+  return {
+    count: state.count
+  };
+}
+
+const mapDispatchToProps = (dispatch) => ({
+  onIncrement: () => dispatch(increase()),
+  onDecrement: () => dispatch(decrease())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Counter);
